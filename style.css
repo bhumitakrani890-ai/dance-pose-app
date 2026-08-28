@@ -31,3 +31,11 @@ button {
   font-size: 16px;
   cursor: pointer;
 }
+
+#webcam {
+  transform: scaleX(-1);
+}
+
+#overlay {
+  transform: scaleX(-1);
+}
