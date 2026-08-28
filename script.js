@@ -21,10 +21,17 @@ pose.onResults((results) => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
 
-  if (results.poseLandmarks) {
-    drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, { color: '#00FF00', lineWidth: 2 });
-    drawLandmarks(ctx, results.poseLandmarks, { color: '#FF0000', radius: 3 });
-  }
+ if (results.poseLandmarks) {
+  drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, { color: '#00FF00', lineWidth: 2 });
+  drawLandmarks(ctx, results.poseLandmarks, { color: '#FF0000', radius: 3 });
+
+  // NEW: test the angle calculation on your left elbow
+  const shoulder = results.poseLandmarks[11];
+  const elbow = results.poseLandmarks[13];
+  const wrist = results.poseLandmarks[15];
+  const elbowAngle = calculateAngle(shoulder, elbow, wrist);
+  console.log('Elbow angle:', elbowAngle.toFixed(1));
+}
 });
 
 startButton.addEventListener('click', async function() {
@@ -87,3 +94,15 @@ async function detectRefVideoPose() {
 referenceVideo.addEventListener('play', () => {
   detectRefVideoPose();
 });
+
+function calculateAngle(A, B, C) {
+  // A, B, C are objects with .x and .y (this matches MediaPipe's landmark format)
+  const angleRadians = Math.atan2(C.y - B.y, C.x - B.x) - Math.atan2(A.y - B.y, A.x - B.x);
+  let angleDegrees = Math.abs(angleRadians * (180 / Math.PI));
+
+  if (angleDegrees > 180) {
+    angleDegrees = 360 - angleDegrees;
+  }
+
+  return angleDegrees;
+}
