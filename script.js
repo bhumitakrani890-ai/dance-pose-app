@@ -50,3 +50,40 @@ startButton.addEventListener('click', async function() {
     console.error('Camera error:', error);
   }
 });
+const referenceVideo = document.querySelector('#referenceVideo');
+const refCanvas = document.createElement('canvas');
+refCanvas.width = 400;
+refCanvas.height = 300;
+document.querySelector('.video-box').appendChild(refCanvas); // adds canvas under reference video
+const refCtx = refCanvas.getContext('2d');
+
+const refPose = new Pose({
+  locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+});
+
+refPose.setOptions({
+  modelComplexity: 1,
+  smoothLandmarks: true,
+  minDetectionConfidence: 0.5,
+  minTrackingConfidence: 0.5
+});
+
+refPose.onResults((results) => {
+  refCtx.clearRect(0, 0, refCanvas.width, refCanvas.height);
+  refCtx.drawImage(results.image, 0, 0, refCanvas.width, refCanvas.height);
+  if (results.poseLandmarks) {
+    drawConnectors(refCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: '#00FFFF', lineWidth: 2 });
+    drawLandmarks(refCtx, results.poseLandmarks, { color: '#FFFF00', radius: 3 });
+  }
+});
+
+async function detectRefVideoPose() {
+  if (!referenceVideo.paused && !referenceVideo.ended) {
+    await refPose.send({ image: referenceVideo });
+  }
+  requestAnimationFrame(detectRefVideoPose);
+}
+
+referenceVideo.addEventListener('play', () => {
+  detectRefVideoPose();
+});
