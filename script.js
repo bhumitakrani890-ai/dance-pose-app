@@ -1,4 +1,5 @@
 let latestRefAngles = null;
+const matchScoreDisplay = document.querySelector('#matchScore');
 const startButton = document.querySelector('#startButton');
 const status = document.querySelector('#status');
 const webcam = document.querySelector('#webcam');
@@ -41,6 +42,7 @@ if (latestRefAngles) {
   const matchScore = Math.max(0, 100 - avgDiff);
 
   console.log('Match score:', matchScore.toFixed(0) + '%');
+  matchScoreDisplay.textContent = 'Match Score: ' + matchScore.toFixed(0) + '%';
 }}
 });
 
