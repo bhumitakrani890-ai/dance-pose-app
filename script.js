@@ -3,6 +3,7 @@ const stopButton = document.querySelector('#stopButton');
 let currentStream = null;
 let myAngleHistory = [];
 let refAngleHistory = [];
+const dtwScoreDisplay = document.querySelector('#dtwScore');
 
 const HISTORY_LENGTH = 30; // roughly 1 second of frames
 const matchScoreDisplay = document.querySelector('#matchScore');
@@ -65,6 +66,7 @@ if (myAngleHistory.length === HISTORY_LENGTH && refAngleHistory.length === HISTO
   const dtwScore = Math.max(0, 100 - (dtwDistance / HISTORY_LENGTH));
 
   console.log('DTW score (timing-aware):', dtwScore.toFixed(0) + '%');
+  dtwScoreDisplay.textContent = 'Timing-Aware Score: ' + dtwScore.toFixed(0) + '%';
 }
 }}
 });
