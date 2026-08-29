@@ -1,6 +1,10 @@
 let latestRefAngles = null;
 const stopButton = document.querySelector('#stopButton');
 let currentStream = null;
+let myAngleHistory = [];
+let refAngleHistory = [];
+
+const HISTORY_LENGTH = 30; // roughly 1 second of frames
 const matchScoreDisplay = document.querySelector('#matchScore');
 const startButton = document.querySelector('#startButton');
 const status = document.querySelector('#status');
@@ -31,6 +35,10 @@ pose.onResults((results) => {
   drawLandmarks(ctx, results.poseLandmarks, { color: '#FF0000', radius: 3 });
 
 const myAngles = getJointAngles(results.poseLandmarks);
+myAngleHistory.push(myAngles);
+if (myAngleHistory.length > HISTORY_LENGTH) {
+  myAngleHistory.shift();
+}
 console.log('My angles:', myAngles);
 if (latestRefAngles) {
   const diff = {
@@ -51,6 +59,12 @@ if (latestRefAngles) {
   matchScoreDisplay.style.color = 'orange';
 } else {
   matchScoreDisplay.style.color = 'red';
+}
+if (myAngleHistory.length === HISTORY_LENGTH && refAngleHistory.length === HISTORY_LENGTH) {
+  const dtwDistance = simpleDTW(myAngleHistory, refAngleHistory, angleDistance);
+  const dtwScore = Math.max(0, 100 - (dtwDistance / HISTORY_LENGTH));
+
+  console.log('DTW score (timing-aware):', dtwScore.toFixed(0) + '%');
 }
 }}
 });
@@ -104,6 +118,10 @@ refPose.onResults((results) => {
     drawConnectors(refCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: '#00FFFF', lineWidth: 2 });
     drawLandmarks(refCtx, results.poseLandmarks, { color: '#FFFF00', radius: 3 });
       latestRefAngles = getJointAngles(results.poseLandmarks);
+      refAngleHistory.push(latestRefAngles);
+if (refAngleHistory.length > HISTORY_LENGTH) {
+  refAngleHistory.shift();
+}
   }
 });
 
@@ -148,3 +166,39 @@ stopButton.addEventListener('click', function() {
     matchScoreDisplay.style.color = 'black';
   }
 });
+
+function angleDistance(a, b) {
+  const diff =
+    Math.abs(a.leftElbow - b.leftElbow) +
+    Math.abs(a.rightElbow - b.rightElbow) +
+    Math.abs(a.leftKnee - b.leftKnee) +
+    Math.abs(a.rightKnee - b.rightKnee);
+  return diff / 4; // average difference across the 4 joints
+}
+function simpleDTW(seq1, seq2, distFunc) {
+  const n = seq1.length;
+  const m = seq2.length;
+
+  // Create a grid to store the "cost" of matching each pair of points
+  const costMatrix = [];
+  for (let i = 0; i <= n; i++) {
+    costMatrix.push(new Array(m + 1).fill(Infinity));
+  }
+  costMatrix[0][0] = 0;
+
+  // Fill the grid: at each cell, take the cheapest path leading to it
+  for (let i = 1; i <= n; i++) {
+    for (let j = 1; j <= m; j++) {
+      const cost = distFunc(seq1[i - 1], seq2[j - 1]);
+      const minPrevious = Math.min(
+        costMatrix[i - 1][j],     // came from above
+        costMatrix[i][j - 1],     // came from the left
+        costMatrix[i - 1][j - 1]  // came diagonally
+      );
+      costMatrix[i][j] = cost + minPrevious;
+    }
+  }
+
+  // The final answer is in the bottom-right corner of the grid
+  return costMatrix[n][m];
+}
