@@ -1,4 +1,6 @@
 let latestRefAngles = null;
+const stopButton = document.querySelector('#stopButton');
+let currentStream = null;
 const matchScoreDisplay = document.querySelector('#matchScore');
 const startButton = document.querySelector('#startButton');
 const status = document.querySelector('#status');
@@ -58,7 +60,8 @@ startButton.addEventListener('click', async function() {
 
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    webcam.srcObject = stream;
+currentStream = stream;
+webcam.srcObject = stream;
     status.textContent = 'Status: Camera live, loading pose model...';
 
     const camera = new Camera(webcam, {
@@ -135,3 +138,13 @@ function getJointAngles(landmarks) {
     rightKnee: calculateAngle(landmarks[24], landmarks[26], landmarks[28]),
   };
 }
+stopButton.addEventListener('click', function() {
+  if (currentStream) {
+    currentStream.getTracks().forEach(track => track.stop());
+    webcam.srcObject = null;
+    currentStream = null;
+    status.textContent = 'Status: Camera stopped';
+    matchScoreDisplay.textContent = 'Match Score: --';
+    matchScoreDisplay.style.color = 'black';
+  }
+});
