@@ -43,6 +43,13 @@ if (latestRefAngles) {
 
   console.log('Match score:', matchScore.toFixed(0) + '%');
   matchScoreDisplay.textContent = 'Match Score: ' + matchScore.toFixed(0) + '%';
+  if (matchScore >= 80) {
+  matchScoreDisplay.style.color = 'green';
+} else if (matchScore >= 50) {
+  matchScoreDisplay.style.color = 'orange';
+} else {
+  matchScoreDisplay.style.color = 'red';
+}
 }}
 });
 
