@@ -1,8 +1,10 @@
+let latestRefAngles = null;
 const startButton = document.querySelector('#startButton');
 const status = document.querySelector('#status');
 const webcam = document.querySelector('#webcam');
 const canvas = document.querySelector('#overlay');
 const ctx = canvas.getContext('2d');
+
 
 // Set up the pose detection model
 const pose = new Pose({
@@ -25,13 +27,12 @@ pose.onResults((results) => {
   drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, { color: '#00FF00', lineWidth: 2 });
   drawLandmarks(ctx, results.poseLandmarks, { color: '#FF0000', radius: 3 });
 
-  // NEW: test the angle calculation on your left elbow
-  const shoulder = results.poseLandmarks[11];
-  const elbow = results.poseLandmarks[13];
-  const wrist = results.poseLandmarks[15];
-  const elbowAngle = calculateAngle(shoulder, elbow, wrist);
-  console.log('Elbow angle:', elbowAngle.toFixed(1));
-}
+const myAngles = getJointAngles(results.poseLandmarks);
+console.log('My angles:', myAngles);
+if (latestRefAngles) {
+  const elbowDiff = Math.abs(myAngles.leftElbow - latestRefAngles.leftElbow);
+  console.log('Left elbow difference:', elbowDiff.toFixed(1));
+}}
 });
 
 startButton.addEventListener('click', async function() {
@@ -81,6 +82,7 @@ refPose.onResults((results) => {
   if (results.poseLandmarks) {
     drawConnectors(refCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: '#00FFFF', lineWidth: 2 });
     drawLandmarks(refCtx, results.poseLandmarks, { color: '#FFFF00', radius: 3 });
+      latestRefAngles = getJointAngles(results.poseLandmarks);
   }
 });
 
@@ -105,4 +107,13 @@ function calculateAngle(A, B, C) {
   }
 
   return angleDegrees;
+}
+// Add this near your calculateAngle function
+function getJointAngles(landmarks) {
+  return {
+    leftElbow: calculateAngle(landmarks[11], landmarks[13], landmarks[15]),
+    rightElbow: calculateAngle(landmarks[12], landmarks[14], landmarks[16]),
+    leftKnee: calculateAngle(landmarks[23], landmarks[25], landmarks[27]),
+    rightKnee: calculateAngle(landmarks[24], landmarks[26], landmarks[28]),
+  };
 }
