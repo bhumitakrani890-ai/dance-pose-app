@@ -30,8 +30,17 @@ pose.onResults((results) => {
 const myAngles = getJointAngles(results.poseLandmarks);
 console.log('My angles:', myAngles);
 if (latestRefAngles) {
-  const elbowDiff = Math.abs(myAngles.leftElbow - latestRefAngles.leftElbow);
-  console.log('Left elbow difference:', elbowDiff.toFixed(1));
+  const diff = {
+    leftElbow: Math.abs(myAngles.leftElbow - latestRefAngles.leftElbow),
+    rightElbow: Math.abs(myAngles.rightElbow - latestRefAngles.rightElbow),
+    leftKnee: Math.abs(myAngles.leftKnee - latestRefAngles.leftKnee),
+    rightKnee: Math.abs(myAngles.rightKnee - latestRefAngles.rightKnee),
+  };
+
+  const avgDiff = (diff.leftElbow + diff.rightElbow + diff.leftKnee + diff.rightKnee) / 4;
+  const matchScore = Math.max(0, 100 - avgDiff);
+
+  console.log('Match score:', matchScore.toFixed(0) + '%');
 }}
 });
 
