@@ -1,41 +1,93 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: sans-serif;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
   text-align: center;
-  padding: 20px;
+  padding: 40px 20px;
+  background-color: #0f0f1a;
+  color: #f0f0f5;
+  margin: 0;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, #7f5af0, #2cb67d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h2 {
+  font-size: 1.2rem;
+  color: #a7a7b8;
+  margin-bottom: 15px;
 }
 
 .video-container {
   display: flex;
   justify-content: center;
-  gap: 30px;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-top: 30px;
 }
 
 .video-box {
   position: relative;
+  background: #1a1a2e;
+  padding: 15px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 video, canvas {
-  border: 2px solid #333;
-  border-radius: 8px;
+  border-radius: 10px;
+  display: block;
 }
 
 #overlay {
   position: absolute;
-  top: 40px;
-  left: 0;
+  top: 60px;
+  left: 15px;
+  border-radius: 10px;
+  pointer-events: none;
 }
 
 button {
-  margin-top: 20px;
-  padding: 10px 20px;
+  margin: 25px 8px 0;
+  padding: 12px 28px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #7f5af0, #6246ea);
+  color: white;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-#webcam {
-  transform: scaleX(-1);
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(127, 90, 240, 0.4);
 }
 
-#overlay {
-  transform: scaleX(-1);
+#stopButton {
+  background: linear-gradient(90deg, #e94560, #c81d5c);
+}
+
+#status {
+  margin-top: 20px;
+  font-size: 15px;
+  color: #a7a7b8;
+}
+
+#matchScore {
+  font-size: 28px !important;
+  margin-top: 10px;
+}
+
+#dtwScore {
+  font-size: 16px !important;
+  margin-top: 5px;
 }
