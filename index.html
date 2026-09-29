@@ -5,13 +5,15 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Dance Pose Trainer</h1>
+<h1>💃 Dance Pose Trainer</h1>
+<p class="subtitle">Practice choreography with real-time pose feedback</p>
 
   <div class="video-container">
     <div class="video-box">
-      <h2>Reference Video</h2>
-      <video id="referenceVideo" controls width="400" src="reference.mp4"></video>
-    </div>
+  <h2>Reference Video</h2>
+  <input type="file" id="videoUpload" accept="video/*">
+  <video id="referenceVideo" controls width="400"></video>
+</div>
 
   <div class="video-box">
   <h2>Your Webcam</h2>

@@ -19,6 +19,13 @@ h1 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+.subtitle {
+  color: #a7a7b8;
+  font-size: 1rem;
+  margin-top: -5px;
+  margin-bottom: 30px;
+  font-weight: 300;
+}
 
 h2 {
   font-size: 1.2rem;
@@ -40,11 +47,15 @@ h2 {
   padding: 15px;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  width: fit-content;
+  height: fit-content;
 }
 
 video, canvas {
   border-radius: 10px;
   display: block;
+  max-height: 400px;
+  width: auto;
 }
 
 .webcam-wrapper {

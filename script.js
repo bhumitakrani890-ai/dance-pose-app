@@ -204,3 +204,13 @@ function simpleDTW(seq1, seq2, distFunc) {
   // The final answer is in the bottom-right corner of the grid
   return costMatrix[n][m];
 }
+const videoUpload = document.querySelector('#videoUpload');
+
+videoUpload.addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const videoURL = URL.createObjectURL(file);
+    referenceVideo.src = videoURL;
+    status.textContent = 'Status: Reference video loaded — click play';
+  }
+});
